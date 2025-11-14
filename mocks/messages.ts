@@ -1,0 +1,93 @@
+import { Chat, Message } from '@/types';
+
+export const mockMessages: Message[] = [
+  {
+    id: 'm1',
+    chatId: 'chat1',
+    senderId: 'shipper1',
+    text: 'Добрый день! Когда планируете прибыть на погрузку?',
+    createdAt: '2025-10-02T09:00:00Z',
+    read: true,
+  },
+  {
+    id: 'm2',
+    chatId: 'chat1',
+    senderId: 'carrier1',
+    text: 'Здравствуйте! Планирую прибыть завтра в 10:00',
+    createdAt: '2025-10-02T09:15:00Z',
+    read: true,
+  },
+  {
+    id: 'm3',
+    chatId: 'chat1',
+    senderId: 'shipper1',
+    text: 'Отлично, будем ждать. Подъезжайте к воротам №3',
+    createdAt: '2025-10-02T09:20:00Z',
+    read: true,
+  },
+  {
+    id: 'm4',
+    chatId: 'chat1',
+    senderId: 'carrier1',
+    text: 'Хорошо, спасибо. Есть ли какие-то особые требования к погрузке?',
+    createdAt: '2025-10-02T09:25:00Z',
+    read: false,
+  },
+  {
+    id: 'm5',
+    chatId: 'chat2',
+    senderId: 'shipper2',
+    text: 'Здравствуйте! Груз готов к отправке',
+    createdAt: '2025-10-02T08:00:00Z',
+    read: true,
+  },
+  {
+    id: 'm6',
+    chatId: 'chat3',
+    senderId: 'carrier2',
+    text: 'Груз доставлен, где можно получить подпись на документах?',
+    createdAt: '2025-09-30T15:30:00Z',
+    read: true,
+  },
+  {
+    id: 'm7',
+    chatId: 'chat3',
+    senderId: 'shipper1',
+    text: 'Спасибо за доставку! Документы подпишут на складе',
+    createdAt: '2025-09-30T15:40:00Z',
+    read: true,
+  },
+];
+
+export const mockChats: Chat[] = [
+  {
+    id: 'chat1',
+    orderId: '1',
+    shipperId: 'shipper1',
+    carrierId: 'carrier1',
+    lastMessage: mockMessages[3],
+    unreadCount: 1,
+    createdAt: '2025-10-02T09:00:00Z',
+    updatedAt: '2025-10-02T09:25:00Z',
+  },
+  {
+    id: 'chat2',
+    orderId: '2',
+    shipperId: 'shipper2',
+    carrierId: 'carrier1',
+    lastMessage: mockMessages[4],
+    unreadCount: 0,
+    createdAt: '2025-10-02T08:00:00Z',
+    updatedAt: '2025-10-02T08:00:00Z',
+  },
+  {
+    id: 'chat3',
+    orderId: '3',
+    shipperId: 'shipper1',
+    carrierId: 'carrier2',
+    lastMessage: mockMessages[6],
+    unreadCount: 0,
+    createdAt: '2025-09-30T15:30:00Z',
+    updatedAt: '2025-09-30T15:40:00Z',
+  },
+];
