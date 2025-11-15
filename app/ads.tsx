@@ -340,18 +340,29 @@ export default function AdsScreen() {
             </Text>
           </View>
 
-          <TouchableOpacity
-            style={styles.detailsButton}
-            onPress={() => handleToggleDetails(item.id)}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.detailsButtonText}>Подробнее</Text>
-            {isExpanded ? (
-              <ChevronUp size={18} color={Colors.primary} />
-            ) : (
-              <ChevronDown size={18} color={Colors.primary} />
-            )}
-          </TouchableOpacity>
+          <View style={styles.buttonRow}>
+            <TouchableOpacity
+              style={[styles.detailsButton, styles.detailsButtonExpand]}
+              onPress={() => handleToggleDetails(item.id)}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.detailsButtonText}>Подробнее</Text>
+              {isExpanded ? (
+                <ChevronUp size={18} color={Colors.primary} />
+              ) : (
+                <ChevronDown size={18} color={Colors.primary} />
+              )}
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.detailedInfoButton}
+              onPress={() => router.push(`/carrier-ad-details?adId=${item.id}` as any)}
+              activeOpacity={0.7}
+            >
+              <Info size={18} color={Colors.surface} />
+              <Text style={styles.detailedInfoButtonText}>Детально</Text>
+            </TouchableOpacity>
+          </View>
 
           {isExpanded && (
             <View style={styles.expandedSection}>
@@ -1194,6 +1205,11 @@ const styles = StyleSheet.create({
     color: Colors.text,
     fontWeight: '500' as const,
   },
+  buttonRow: {
+    flexDirection: 'row',
+    gap: 10,
+    marginBottom: 0,
+  },
   detailsButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1205,10 +1221,28 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.primary + '30',
   },
+  detailsButtonExpand: {
+    flex: 1,
+  },
   detailsButtonText: {
     fontSize: 15,
     fontWeight: '600' as const,
     color: Colors.primary,
+  },
+  detailedInfoButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    backgroundColor: Colors.primary,
+  },
+  detailedInfoButtonText: {
+    fontSize: 15,
+    fontWeight: '600' as const,
+    color: Colors.surface,
   },
   expandedSection: {
     marginTop: 16,
