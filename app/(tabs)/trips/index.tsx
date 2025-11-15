@@ -1,4 +1,4 @@
-import { Truck, Package, Clock, CheckCircle, Filter, Map } from 'lucide-react-native';
+import { Truck, Package, Clock, CheckCircle, Filter, Map, Plus } from 'lucide-react-native';
 import React, { useState } from 'react';
 import {
   View,
@@ -13,9 +13,11 @@ import { useRouter } from 'expo-router';
 import Colors from '@/constants/colors';
 import { mockTrips } from '@/mocks/trips';
 import { Trip, TripStatus } from '@/types';
+import { useRole } from '@/contexts/RoleContext';
 
 export default function TripsScreen() {
   const router = useRouter();
+  const { role } = useRole();
   const [selectedStatus, setSelectedStatus] = useState<'all' | TripStatus>('all');
 
   const filteredTrips = mockTrips.filter((trip) => {
@@ -236,13 +238,24 @@ export default function TripsScreen() {
               <Text style={styles.statLabel}>Завершенные</Text>
             </View>
           </View>
-          <TouchableOpacity
-            style={styles.mapButton}
-            activeOpacity={0.8}
-            onPress={() => router.push('/(tabs)/trips/map' as any)}
-          >
-            <Map size={20} color="#FFFFFF" />
-          </TouchableOpacity>
+          <View style={styles.headerButtons}>
+            {role === 'cargo-owner' && (
+              <TouchableOpacity
+                style={styles.createButton}
+                activeOpacity={0.8}
+                onPress={() => router.push('/(tabs)/trips/create-request' as any)}
+              >
+                <Plus size={20} color="#FFFFFF" />
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity
+              style={styles.mapButton}
+              activeOpacity={0.8}
+              onPress={() => router.push('/(tabs)/trips/map' as any)}
+            >
+              <Map size={20} color="#FFFFFF" />
+            </TouchableOpacity>
+          </View>
         </View>
 
         <View style={styles.filterContainer}>
@@ -357,6 +370,24 @@ const styles = StyleSheet.create({
     width: 1,
     height: 32,
     backgroundColor: Colors.border,
+  },
+  headerButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  createButton: {
+    backgroundColor: Colors.primary,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: Colors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
   },
   mapButton: {
     backgroundColor: Colors.accent,

@@ -33,6 +33,12 @@ export default function TripsLayout() {
           title: 'Детали Рейса',
         }}
       />
+      <Stack.Screen
+        name="create-request"
+        options={{
+          title: 'Создать Запрос',
+        }}
+      />
     </Stack>
   );
 }
