@@ -8,7 +8,6 @@ import {
   ChevronRight,
   Shield,
   DollarSign,
-  Settings,
 } from 'lucide-react-native';
 import React from 'react';
 import {
@@ -181,22 +180,7 @@ export default function PaymentsScreen() {
             <ChevronRight size={20} color={Colors.textSecondary} />
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.actionButton}
-            onPress={() => router.push('/(tabs)/payments/commission' as any)}
-            activeOpacity={0.7}
-          >
-            <View style={styles.actionButtonLeft}>
-              <Settings size={24} color={Colors.primary} />
-              <View style={styles.actionButtonText}>
-                <Text style={styles.actionButtonTitle}>Настройка Комиссии</Text>
-                <Text style={styles.actionButtonSubtitle}>
-                  Управление комиссией
-                </Text>
-              </View>
-            </View>
-            <ChevronRight size={20} color={Colors.textSecondary} />
-          </TouchableOpacity>
+
         </View>
 
         {pendingPayments.length > 0 && (
