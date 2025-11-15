@@ -309,26 +309,58 @@ export const [EscrowPaymentContext, useEscrowPayments] = createContextHook(() =>
 
         if (order.status === 'completed' && payment.status === 'payment_confirmed') {
           console.log('Order completed, releasing payment to carrier:', order.id);
-          try {
-            await releaseToCarrier(payment.id);
-          } catch (error) {
-            console.error('Error releasing payment:', error);
-          }
+          const updatedPayment: Payment = {
+            ...payment,
+            status: 'payment_released',
+            releasedAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          };
+
+          const newPayments = payments.map(p => p.id === payment.id ? updatedPayment : p);
+          await savePayments(newPayments);
+
+          const payout: PayoutHistory = {
+            id: `payout_${Date.now()}`,
+            paymentId: payment.id,
+            carrierId: payment.carrierId!,
+            amount: payment.amountCarrier,
+            currency: payment.currency,
+            status: 'completed',
+            processedAt: new Date().toISOString(),
+            createdAt: new Date().toISOString(),
+          };
+
+          const newPayoutHistory = [...payoutHistory, payout];
+          await savePayoutHistory(newPayoutHistory);
+
+          await updateOrder(payment.orderId, { 
+            payment: updatedPayment, 
+            paymentStatus: 'payment_released' 
+          });
         }
 
         if (order.status === 'cancelled' && payment.status === 'payment_hold') {
           console.log('Order cancelled, refunding customer:', order.id);
-          try {
-            await refundCustomer(payment.id);
-          } catch (error) {
-            console.error('Error refunding payment:', error);
-          }
+          const updatedPayment: Payment = {
+            ...payment,
+            status: 'payment_refund',
+            refundedAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          };
+
+          const newPayments = payments.map(p => p.id === payment.id ? updatedPayment : p);
+          await savePayments(newPayments);
+
+          await updateOrder(payment.orderId, { 
+            payment: updatedPayment, 
+            paymentStatus: 'payment_refund' 
+          });
         }
       }
     };
 
     handleOrderStatusChange();
-  }, [orders, payments, releaseToCarrier, refundCustomer]);
+  }, [orders]);
 
   return {
     payments,
