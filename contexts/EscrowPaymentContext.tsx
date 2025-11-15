@@ -317,7 +317,8 @@ export const [EscrowPaymentContext, useEscrowPayments] = createContextHook(() =>
           };
 
           const newPayments = payments.map(p => p.id === payment.id ? updatedPayment : p);
-          await savePayments(newPayments);
+          setPayments(newPayments);
+          await AsyncStorage.setItem(STORAGE_KEYS.PAYMENTS, JSON.stringify(newPayments));
 
           const payout: PayoutHistory = {
             id: `payout_${Date.now()}`,
@@ -331,12 +332,8 @@ export const [EscrowPaymentContext, useEscrowPayments] = createContextHook(() =>
           };
 
           const newPayoutHistory = [...payoutHistory, payout];
-          await savePayoutHistory(newPayoutHistory);
-
-          await updateOrder(payment.orderId, { 
-            payment: updatedPayment, 
-            paymentStatus: 'payment_released' 
-          });
+          setPayoutHistory(newPayoutHistory);
+          await AsyncStorage.setItem(STORAGE_KEYS.PAYOUT_HISTORY, JSON.stringify(newPayoutHistory));
         }
 
         if (order.status === 'cancelled' && payment.status === 'payment_hold') {
@@ -349,18 +346,14 @@ export const [EscrowPaymentContext, useEscrowPayments] = createContextHook(() =>
           };
 
           const newPayments = payments.map(p => p.id === payment.id ? updatedPayment : p);
-          await savePayments(newPayments);
-
-          await updateOrder(payment.orderId, { 
-            payment: updatedPayment, 
-            paymentStatus: 'payment_refund' 
-          });
+          setPayments(newPayments);
+          await AsyncStorage.setItem(STORAGE_KEYS.PAYMENTS, JSON.stringify(newPayments));
         }
       }
     };
 
     handleOrderStatusChange();
-  }, [orders]);
+  }, [orders, payments, payoutHistory]);
 
   return {
     payments,
