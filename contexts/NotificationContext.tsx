@@ -1,5 +1,6 @@
 import createContextHook from '@nkzw/create-context-hook';
 import * as Notifications from 'expo-notifications';
+import Constants from 'expo-constants';
 import { useEffect, useState, useCallback, useRef, useMemo } from 'react';
 import { Platform } from 'react-native';
 import { useRouter } from 'expo-router';
@@ -20,6 +21,26 @@ type NotificationData = {
   chatId?: string;
   title: string;
   body: string;
+};
+
+type EasExtraConfig = {
+  eas?: {
+    projectId?: string;
+  };
+};
+
+const resolveExpoProjectId = (): string | undefined => {
+  const extra = Constants.expoConfig?.extra;
+  if (extra && typeof extra === 'object') {
+    const easConfig = (extra as EasExtraConfig).eas;
+    if (easConfig?.projectId) {
+      return easConfig.projectId;
+    }
+  }
+  if (Constants.easConfig?.projectId) {
+    return Constants.easConfig.projectId;
+  }
+  return undefined;
 };
 
 export const [NotificationContext, useNotifications] = createContextHook(() => {
@@ -62,8 +83,21 @@ export const [NotificationContext, useNotifications] = createContextHook(() => {
         });
       }
 
+      if (Constants.appOwnership === 'expo') {
+        console.log('Expo Go does not support push token registration. Skipping.');
+        setExpoPushToken(undefined);
+        return;
+      }
+
+      const projectId = resolveExpoProjectId();
+      if (!projectId) {
+        console.log('Expo project ID not configured. Skipping push token registration.');
+        setExpoPushToken(undefined);
+        return;
+      }
+
       const token = (await Notifications.getExpoPushTokenAsync({
-        projectId: 'sa7tdlgkoji3rk2duaqzo'
+        projectId,
       })).data;
       setExpoPushToken(token);
       console.log('Expo Push Token:', token);
