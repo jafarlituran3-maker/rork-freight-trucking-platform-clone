@@ -38,7 +38,7 @@ export default function ChatScreen() {
     if (chat) {
       markMessagesAsRead(chatId);
     }
-  }, [chatId, chat, markMessagesAsRead]);
+  }, [chatId]);
 
   const handleSend = async () => {
     if (!inputText.trim() || !chat) return;
