@@ -364,20 +364,20 @@ export default function OrderDetailScreen() {
             >
               <View style={styles.paymentRow}>
                 <View style={styles.paymentLeft}>
-                  {payment.status === 'paid' ? (
+                  {(payment.status === 'payment_confirmed' || payment.status === 'payment_released') ? (
                     <CheckCircle size={20} color={Colors.success} />
                   ) : (
                     <Clock size={20} color={Colors.warning} />
                   )}
                   <Text style={styles.paymentLabel}>
-                    {payment.status === 'paid' ? 'Paid' : 'Awaiting payment'}
+                    {(payment.status === 'payment_confirmed' || payment.status === 'payment_released') ? 'Paid' : 'Awaiting payment'}
                   </Text>
                 </View>
                 <Text style={styles.paymentAmount}>
                   {formatAmount(finalPrice)} {order.currency}
                 </Text>
               </View>
-              {payment.status === 'pending' && (
+              {(payment.status === 'payment_pending' || payment.status === 'payment_created') && (
                 <TouchableOpacity
                   style={styles.payButton}
                   onPress={(e) => {

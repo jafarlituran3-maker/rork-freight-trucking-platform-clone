@@ -70,7 +70,7 @@ export const mockTrips: Trip[] = [
       totalPrice: 85000,
       currency: 'RUB',
       paidAmount: 42500,
-      paymentStatus: 'processing',
+      paymentStatus: 'payment_hold',
       paymentMethod: 'Безналичный расчет',
     },
     documents: {
@@ -156,7 +156,7 @@ export const mockTrips: Trip[] = [
       totalPrice: 72000,
       currency: 'RUB',
       paidAmount: 0,
-      paymentStatus: 'pending',
+      paymentStatus: 'payment_pending',
       paymentMethod: 'Предоплата',
     },
     documents: {
@@ -237,7 +237,7 @@ export const mockTrips: Trip[] = [
       totalPrice: 95000,
       currency: 'RUB',
       paidAmount: 95000,
-      paymentStatus: 'paid',
+      paymentStatus: 'payment_confirmed',
       paymentMethod: 'Безналичный расчет',
     },
     documents: {
@@ -328,7 +328,7 @@ export const mockTrips: Trip[] = [
       totalPrice: 48000,
       currency: 'RUB',
       paidAmount: 0,
-      paymentStatus: 'pending',
+      paymentStatus: 'payment_pending',
       paymentMethod: 'Постоплата',
     },
     documents: {
@@ -400,7 +400,7 @@ export const mockTrips: Trip[] = [
       totalPrice: 54000,
       currency: 'RUB',
       paidAmount: 27000,
-      paymentStatus: 'processing',
+      paymentStatus: 'payment_hold',
       paymentMethod: 'Безналичный расчет',
     },
     documents: {
@@ -480,7 +480,7 @@ export const mockTrips: Trip[] = [
       totalPrice: 68000,
       currency: 'RUB',
       paidAmount: 68000,
-      paymentStatus: 'paid',
+      paymentStatus: 'payment_confirmed',
       paymentMethod: 'Безналичный расчет',
     },
     documents: {
@@ -571,7 +571,7 @@ export const mockTrips: Trip[] = [
       totalPrice: 42000,
       currency: 'RUB',
       paidAmount: 42000,
-      paymentStatus: 'paid',
+      paymentStatus: 'payment_confirmed',
       paymentMethod: 'Предоплата',
     },
     documents: {
@@ -658,7 +658,7 @@ export const mockTrips: Trip[] = [
       totalPrice: 58000,
       currency: 'RUB',
       paidAmount: 58000,
-      paymentStatus: 'paid',
+      paymentStatus: 'payment_confirmed',
       paymentMethod: 'Безналичный расчет',
     },
     documents: {
@@ -747,7 +747,7 @@ export const mockTrips: Trip[] = [
       totalPrice: 92000,
       currency: 'RUB',
       paidAmount: 46000,
-      paymentStatus: 'processing',
+      paymentStatus: 'payment_hold',
       paymentMethod: 'Безналичный расчет',
     },
     documents: {
@@ -816,7 +816,7 @@ export const mockTrips: Trip[] = [
       totalPrice: 78000,
       currency: 'RUB',
       paidAmount: 0,
-      paymentStatus: 'pending',
+      paymentStatus: 'payment_pending',
       paymentMethod: 'Постоплата',
     },
     documents: {

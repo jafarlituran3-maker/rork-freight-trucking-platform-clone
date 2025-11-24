@@ -292,7 +292,7 @@ export default function TripDetailsScreen() {
                   styles.paymentBadge,
                   {
                     backgroundColor:
-                      trip.financial.paymentStatus === 'paid' ? '#4CAF5020' : '#FF980020',
+                      (trip.financial.paymentStatus === 'payment_confirmed' || trip.financial.paymentStatus === 'payment_released') ? '#4CAF5020' : '#FF980020',
                   },
                 ]}
               >
@@ -301,13 +301,13 @@ export default function TripDetailsScreen() {
                     styles.paymentStatus,
                     {
                       color:
-                        trip.financial.paymentStatus === 'paid' ? '#4CAF50' : '#FF9800',
+                        (trip.financial.paymentStatus === 'payment_confirmed' || trip.financial.paymentStatus === 'payment_released') ? '#4CAF50' : '#FF9800',
                     },
                   ]}
                 >
-                  {trip.financial.paymentStatus === 'paid'
+                  {(trip.financial.paymentStatus === 'payment_confirmed' || trip.financial.paymentStatus === 'payment_released')
                     ? 'Оплачено'
-                    : trip.financial.paymentStatus === 'processing'
+                    : trip.financial.paymentStatus === 'payment_hold'
                       ? 'Обработка'
                       : 'Ожидает оплаты'}
                 </Text>

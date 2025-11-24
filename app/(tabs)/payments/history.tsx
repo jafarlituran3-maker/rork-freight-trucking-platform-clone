@@ -36,15 +36,17 @@ export default function PaymentHistoryScreen() {
 
   const getStatusIcon = (status: PaymentStatus) => {
     switch (status) {
-      case 'paid':
+      case 'payment_confirmed':
+      case 'payment_released':
         return <CheckCircle size={20} color={Colors.success} />;
-      case 'pending':
+      case 'payment_pending':
+      case 'payment_created':
         return <Clock size={20} color={Colors.warning} />;
-      case 'processing':
+      case 'payment_hold':
         return <Clock size={20} color={Colors.primary} />;
-      case 'failed':
+      case 'payment_failed':
         return <AlertCircle size={20} color={Colors.error} />;
-      case 'refunded':
+      case 'payment_refund':
         return <AlertCircle size={20} color={Colors.textSecondary} />;
       default:
         return <Clock size={20} color={Colors.textSecondary} />;
@@ -53,16 +55,20 @@ export default function PaymentHistoryScreen() {
 
   const getStatusText = (status: PaymentStatus) => {
     switch (status) {
-      case 'paid':
-        return 'Оплачено';
-      case 'pending':
+      case 'payment_created':
+        return 'Создан';
+      case 'payment_pending':
         return 'Ожидает';
-      case 'processing':
-        return 'Обработка';
-      case 'failed':
-        return 'Ошибка';
-      case 'refunded':
+      case 'payment_hold':
+        return 'Удержано';
+      case 'payment_confirmed':
+        return 'Оплачено';
+      case 'payment_released':
+        return 'Выплачено';
+      case 'payment_refund':
         return 'Возврат';
+      case 'payment_failed':
+        return 'Ошибка';
       default:
         return status;
     }
@@ -70,15 +76,17 @@ export default function PaymentHistoryScreen() {
 
   const getStatusColor = (status: PaymentStatus) => {
     switch (status) {
-      case 'paid':
+      case 'payment_confirmed':
+      case 'payment_released':
         return Colors.success;
-      case 'pending':
+      case 'payment_pending':
+      case 'payment_created':
         return Colors.warning;
-      case 'processing':
+      case 'payment_hold':
         return Colors.primary;
-      case 'failed':
+      case 'payment_failed':
         return Colors.error;
-      case 'refunded':
+      case 'payment_refund':
         return Colors.textSecondary;
       default:
         return Colors.textSecondary;
@@ -91,10 +99,10 @@ export default function PaymentHistoryScreen() {
 
   const filters: { value: PaymentStatus | 'all'; label: string }[] = [
     { value: 'all', label: 'Все' },
-    { value: 'pending', label: 'Ожидают' },
-    { value: 'paid', label: 'Оплачено' },
-    { value: 'failed', label: 'Ошибки' },
-    { value: 'refunded', label: 'Возвраты' },
+    { value: 'payment_pending', label: 'Ожидают' },
+    { value: 'payment_confirmed', label: 'Оплачено' },
+    { value: 'payment_failed', label: 'Ошибки' },
+    { value: 'payment_refund', label: 'Возвраты' },
   ];
 
   return (
@@ -174,7 +182,7 @@ export default function PaymentHistoryScreen() {
                   </View>
                   <View style={styles.paymentRight}>
                     <Text style={styles.paymentAmount}>
-                      {payment.amount.toLocaleString('ru-RU')} ₽
+                      {payment.amountTotal.toLocaleString('ru-RU')} ₽
                     </Text>
                     <Text
                       style={[

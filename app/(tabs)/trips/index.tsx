@@ -199,16 +199,16 @@ export default function TripsScreen() {
           <View
             style={[
               styles.paymentBadge,
-              { backgroundColor: item.financial.paymentStatus === 'paid' ? '#4CAF5020' : '#FF980020' },
+              { backgroundColor: (item.financial.paymentStatus === 'payment_confirmed' || item.financial.paymentStatus === 'payment_released') ? '#4CAF5020' : '#FF980020' },
             ]}
           >
             <Text
               style={[
                 styles.paymentStatus,
-                { color: item.financial.paymentStatus === 'paid' ? '#4CAF50' : '#FF9800' },
+                { color: (item.financial.paymentStatus === 'payment_confirmed' || item.financial.paymentStatus === 'payment_released') ? '#4CAF50' : '#FF9800' },
               ]}
             >
-              {item.financial.paymentStatus === 'paid' ? 'Оплачено' : item.financial.paymentStatus === 'processing' ? 'Обработка' : 'Ожидает оплаты'}
+              {(item.financial.paymentStatus === 'payment_confirmed' || item.financial.paymentStatus === 'payment_released') ? 'Оплачено' : item.financial.paymentStatus === 'payment_hold' ? 'Обработка' : 'Ожидает оплаты'}
             </Text>
           </View>
         </View>

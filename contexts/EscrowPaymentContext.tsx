@@ -1,6 +1,6 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import createContextHook from '@nkzw/create-context-hook';
-import { Payment, PaymentStatus, CommissionConfig, PayoutHistory, Order } from '@/types';
+import { Payment, PaymentStatus, CommissionConfig, PayoutHistory } from '@/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useOrders } from './OrderContext';
 
@@ -21,7 +21,7 @@ export const [EscrowPaymentContext, useEscrowPayments] = createContextHook(() =>
   const [payoutHistory, setPayoutHistory] = useState<PayoutHistory[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const { orders, updateOrder } = useOrders();
+  const { orders } = useOrders();
 
   useEffect(() => {
     loadData();
@@ -102,14 +102,11 @@ export const [EscrowPaymentContext, useEscrowPayments] = createContextHook(() =>
     const newPayments = [...payments, payment];
     await savePayments(newPayments);
 
-    await updateOrder(orderId, { 
-      payment, 
-      paymentStatus: 'payment_created' 
-    });
+    console.log('Order payment created:', orderId);
 
     console.log('Payment created:', payment.id);
     return payment;
-  }, [orders, payments, calculateCommission, updateOrder]);
+  }, [orders, payments, calculateCommission]);
 
   const holdAmount = useCallback(async (paymentId: string): Promise<void> => {
     const payment = payments.find(p => p.id === paymentId);
@@ -128,13 +125,10 @@ export const [EscrowPaymentContext, useEscrowPayments] = createContextHook(() =>
     const newPayments = payments.map(p => p.id === paymentId ? updatedPayment : p);
     await savePayments(newPayments);
 
-    await updateOrder(payment.orderId, { 
-      payment: updatedPayment, 
-      paymentStatus: 'payment_hold' 
-    });
+    console.log('Order payment held:', payment.orderId);
 
     console.log('Amount held in escrow:', paymentId);
-  }, [payments, updateOrder]);
+  }, [payments]);
 
   const confirmPayment = useCallback(async (paymentId: string): Promise<void> => {
     const payment = payments.find(p => p.id === paymentId);
@@ -152,15 +146,12 @@ export const [EscrowPaymentContext, useEscrowPayments] = createContextHook(() =>
     const newPayments = payments.map(p => p.id === paymentId ? updatedPayment : p);
     await savePayments(newPayments);
 
-    await updateOrder(payment.orderId, { 
-      payment: updatedPayment, 
-      paymentStatus: 'payment_confirmed' 
-    });
+    console.log('Order payment confirmed:', payment.orderId);
 
     await holdAmount(paymentId);
 
     console.log('Payment confirmed:', paymentId);
-  }, [payments, holdAmount, updateOrder]);
+  }, [payments, holdAmount]);
 
   const releaseToCarrier = useCallback(async (paymentId: string, carrierAmount?: number): Promise<void> => {
     const payment = payments.find(p => p.id === paymentId);
@@ -198,13 +189,10 @@ export const [EscrowPaymentContext, useEscrowPayments] = createContextHook(() =>
     const newPayoutHistory = [...payoutHistory, payout];
     await savePayoutHistory(newPayoutHistory);
 
-    await updateOrder(payment.orderId, { 
-      payment: updatedPayment, 
-      paymentStatus: 'payment_released' 
-    });
+    console.log('Order payment released:', payment.orderId);
 
     console.log('Payment released to carrier:', paymentId, releaseAmount);
-  }, [payments, payoutHistory, updateOrder]);
+  }, [payments, payoutHistory]);
 
   const refundCustomer = useCallback(async (paymentId: string): Promise<void> => {
     const payment = payments.find(p => p.id === paymentId);
@@ -222,13 +210,10 @@ export const [EscrowPaymentContext, useEscrowPayments] = createContextHook(() =>
     const newPayments = payments.map(p => p.id === paymentId ? updatedPayment : p);
     await savePayments(newPayments);
 
-    await updateOrder(payment.orderId, { 
-      payment: updatedPayment, 
-      paymentStatus: 'payment_refund' 
-    });
+    console.log('Order payment refunded:', payment.orderId);
 
     console.log('Payment refunded to customer:', paymentId);
-  }, [payments, updateOrder]);
+  }, [payments]);
 
   const updatePaymentStatus = useCallback(async (paymentId: string, status: PaymentStatus): Promise<void> => {
     const payment = payments.find(p => p.id === paymentId);
@@ -245,13 +230,10 @@ export const [EscrowPaymentContext, useEscrowPayments] = createContextHook(() =>
     const newPayments = payments.map(p => p.id === paymentId ? updatedPayment : p);
     await savePayments(newPayments);
 
-    await updateOrder(payment.orderId, { 
-      payment: updatedPayment, 
-      paymentStatus: status 
-    });
+    console.log('Order payment status updated:', payment.orderId, status);
 
     console.log('Payment status updated:', paymentId, status);
-  }, [payments, updateOrder]);
+  }, [payments]);
 
   const setCommission = useCallback(async (percent: number, fixedAmount: number): Promise<void> => {
     const newConfig: CommissionConfig = { percent, fixedAmount };

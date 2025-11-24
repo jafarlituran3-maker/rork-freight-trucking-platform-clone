@@ -53,15 +53,17 @@ export default function PaymentDetailScreen() {
 
   const getStatusIcon = (status: PaymentStatus) => {
     switch (status) {
-      case 'paid':
+      case 'payment_confirmed':
+      case 'payment_released':
         return <CheckCircle size={32} color={Colors.success} />;
-      case 'pending':
+      case 'payment_pending':
+      case 'payment_created':
         return <Clock size={32} color={Colors.warning} />;
-      case 'processing':
+      case 'payment_hold':
         return <Clock size={32} color={Colors.primary} />;
-      case 'failed':
+      case 'payment_failed':
         return <AlertCircle size={32} color={Colors.error} />;
-      case 'refunded':
+      case 'payment_refund':
         return <AlertCircle size={32} color={Colors.textSecondary} />;
       default:
         return <Clock size={32} color={Colors.textSecondary} />;
@@ -70,16 +72,20 @@ export default function PaymentDetailScreen() {
 
   const getStatusText = (status: PaymentStatus) => {
     switch (status) {
-      case 'paid':
-        return 'Оплачено';
-      case 'pending':
+      case 'payment_created':
+        return 'Создан';
+      case 'payment_pending':
         return 'Ожидает оплаты';
-      case 'processing':
-        return 'Обработка';
-      case 'failed':
-        return 'Ошибка';
-      case 'refunded':
+      case 'payment_hold':
+        return 'Удержано';
+      case 'payment_confirmed':
+        return 'Оплачено';
+      case 'payment_released':
+        return 'Выплачено';
+      case 'payment_refund':
         return 'Возврат';
+      case 'payment_failed':
+        return 'Ошибка';
       default:
         return status;
     }
@@ -87,15 +93,17 @@ export default function PaymentDetailScreen() {
 
   const getStatusColor = (status: PaymentStatus) => {
     switch (status) {
-      case 'paid':
+      case 'payment_confirmed':
+      case 'payment_released':
         return Colors.success;
-      case 'pending':
+      case 'payment_pending':
+      case 'payment_created':
         return Colors.warning;
-      case 'processing':
+      case 'payment_hold':
         return Colors.primary;
-      case 'failed':
+      case 'payment_failed':
         return Colors.error;
-      case 'refunded':
+      case 'payment_refund':
         return Colors.textSecondary;
       default:
         return Colors.textSecondary;
@@ -162,7 +170,7 @@ export default function PaymentDetailScreen() {
             {getStatusText(payment.status)}
           </Text>
           <Text style={styles.amount}>
-            {payment.amount.toLocaleString('ru-RU')} {payment.currency}
+            {payment.amountTotal.toLocaleString('ru-RU')} {payment.currency}
           </Text>
           {payment.description && (
             <Text style={styles.description}>{payment.description}</Text>
@@ -258,7 +266,7 @@ export default function PaymentDetailScreen() {
           </View>
         )}
 
-        {payment.status === 'pending' && (
+        {(payment.status === 'payment_pending' || payment.status === 'payment_created') && (
           <TouchableOpacity
             style={[styles.button, styles.primaryButton]}
             onPress={handlePayment}
@@ -276,7 +284,7 @@ export default function PaymentDetailScreen() {
           </TouchableOpacity>
         )}
 
-        {payment.status === 'paid' && (
+        {(payment.status === 'payment_confirmed' || payment.status === 'payment_released') && (
           <TouchableOpacity
             style={[styles.button, styles.dangerButton]}
             onPress={handleRefund}

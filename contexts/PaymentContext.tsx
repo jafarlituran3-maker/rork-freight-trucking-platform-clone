@@ -27,9 +27,12 @@ export const [PaymentContext, usePayments] = createContextHook(() => {
     {
       id: 'pay1',
       orderId: '1',
-      amount: 85000,
+      customerId: 'user1',
+      amountTotal: 85000,
+      amountCarrier: 76500,
+      amountPlatformCommission: 8500,
       currency: 'RUB',
-      status: 'paid',
+      status: 'payment_confirmed',
       paymentMethodId: 'pm1',
       paidAt: '2025-10-02T11:00:00Z',
       createdAt: '2025-10-01T09:00:00Z',
@@ -40,9 +43,12 @@ export const [PaymentContext, usePayments] = createContextHook(() => {
     {
       id: 'pay2',
       orderId: '2',
-      amount: 45000,
+      customerId: 'user1',
+      amountTotal: 45000,
+      amountCarrier: 40500,
+      amountPlatformCommission: 4500,
       currency: 'RUB',
-      status: 'pending',
+      status: 'payment_pending',
       createdAt: '2025-10-02T07:00:00Z',
       updatedAt: '2025-10-02T07:00:00Z',
       description: 'Оплата за перевозку #2',
@@ -50,9 +56,12 @@ export const [PaymentContext, usePayments] = createContextHook(() => {
     {
       id: 'pay3',
       orderId: '3',
-      amount: 32000,
+      customerId: 'user1',
+      amountTotal: 32000,
+      amountCarrier: 28800,
+      amountPlatformCommission: 3200,
       currency: 'RUB',
-      status: 'paid',
+      status: 'payment_confirmed',
       paymentMethodId: 'pm2',
       paidAt: '2025-09-30T16:30:00Z',
       createdAt: '2025-09-28T11:00:00Z',
@@ -120,12 +129,18 @@ export const [PaymentContext, usePayments] = createContextHook(() => {
       currency: string,
       description?: string
     ) => {
+      const platformCommission = amount * 0.1;
+      const carrierAmount = amount - platformCommission;
+      
       const newPayment: Payment = {
         id: `pay${Date.now()}`,
         orderId,
-        amount,
+        customerId: 'user1',
+        amountTotal: amount,
+        amountCarrier: carrierAmount,
+        amountPlatformCommission: platformCommission,
         currency,
-        status: 'pending',
+        status: 'payment_pending',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         description,
@@ -144,7 +159,7 @@ export const [PaymentContext, usePayments] = createContextHook(() => {
           p.id === paymentId
             ? {
                 ...p,
-                status: 'processing' as PaymentStatus,
+                status: 'payment_hold' as PaymentStatus,
                 paymentMethodId,
                 updatedAt: new Date().toISOString(),
               }
@@ -159,7 +174,7 @@ export const [PaymentContext, usePayments] = createContextHook(() => {
           p.id === paymentId
             ? {
                 ...p,
-                status: 'paid' as PaymentStatus,
+                status: 'payment_confirmed' as PaymentStatus,
                 paidAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString(),
                 transactionId: `TXN${Date.now()}`,
@@ -179,7 +194,7 @@ export const [PaymentContext, usePayments] = createContextHook(() => {
         p.id === paymentId
           ? {
               ...p,
-              status: 'processing' as PaymentStatus,
+              status: 'payment_hold' as PaymentStatus,
               updatedAt: new Date().toISOString(),
             }
           : p
@@ -193,7 +208,7 @@ export const [PaymentContext, usePayments] = createContextHook(() => {
         p.id === paymentId
           ? {
               ...p,
-              status: 'refunded' as PaymentStatus,
+              status: 'payment_refund' as PaymentStatus,
               updatedAt: new Date().toISOString(),
             }
           : p
