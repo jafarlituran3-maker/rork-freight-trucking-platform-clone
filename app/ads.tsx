@@ -82,77 +82,83 @@ export default function AdsScreen() {
 
   const isCargoOwner = role === 'cargo-owner';
 
-  const filteredAds = useMemo(() => {
-    if (isCargoOwner) {
-      const ads = mockCarrierAds;
-      return ads.filter((ad) => {
-        const searchLower = searchQuery.toLowerCase().trim();
-        if (searchLower) {
-          const routeMatch =
-            ad.availableFrom.city.toLowerCase().includes(searchLower) ||
-            ad.availableTo.city.toLowerCase().includes(searchLower) ||
-            ad.availableFrom.address.toLowerCase().includes(searchLower) ||
-            ad.availableTo.address.toLowerCase().includes(searchLower);
-          if (!routeMatch) return false;
-        }
-
-        if (filters.company) {
-          const companyLower = filters.company.toLowerCase().trim();
-          if (!ad.carrierCompany.name.toLowerCase().includes(companyLower)) {
-            return false;
-          }
-        }
-
-        if (filters.minPrice) {
-          const minPrice = parseFloat(filters.minPrice);
-          if (!isNaN(minPrice) && ad.averagePrice < minPrice) {
-            return false;
-          }
-        }
-
-        if (filters.maxPrice) {
-          const maxPrice = parseFloat(filters.maxPrice);
-          if (!isNaN(maxPrice) && ad.averagePrice > maxPrice) {
-            return false;
-          }
-        }
-
-        if (filters.minWeight) {
-          const minWeight = parseFloat(filters.minWeight);
-          if (!isNaN(minWeight) && ad.truckInfo.loadCapacity < minWeight) {
-            return false;
-          }
-        }
-
-        if (filters.maxWeight) {
-          const maxWeight = parseFloat(filters.maxWeight);
-          if (!isNaN(maxWeight) && ad.truckInfo.loadCapacity > maxWeight) {
-            return false;
-          }
-        }
-
-        if (filters.startDate) {
-          const startDate = new Date(filters.startDate);
-          const adDate = new Date(ad.availableDate);
-          if (!isNaN(startDate.getTime()) && adDate < startDate) {
-            return false;
-          }
-        }
-
-        if (filters.endDate) {
-          const endDate = new Date(filters.endDate);
-          const adDate = new Date(ad.availableDate);
-          if (!isNaN(endDate.getTime()) && adDate > endDate) {
-            return false;
-          }
-        }
-
-        return true;
-      });
+  const filteredCarrierAds = useMemo<CarrierAd[]>(() => {
+    if (!isCargoOwner) {
+      return [];
     }
-    
-    const ads = mockAds;
-    return ads.filter((ad) => {
+
+    return mockCarrierAds.filter((ad) => {
+      const searchLower = searchQuery.toLowerCase().trim();
+      if (searchLower) {
+        const routeMatch =
+          ad.availableFrom.city.toLowerCase().includes(searchLower) ||
+          ad.availableTo.city.toLowerCase().includes(searchLower) ||
+          ad.availableFrom.address.toLowerCase().includes(searchLower) ||
+          ad.availableTo.address.toLowerCase().includes(searchLower);
+        if (!routeMatch) return false;
+      }
+
+      if (filters.company) {
+        const companyLower = filters.company.toLowerCase().trim();
+        if (!ad.carrierCompany.name.toLowerCase().includes(companyLower)) {
+          return false;
+        }
+      }
+
+      if (filters.minPrice) {
+        const minPrice = parseFloat(filters.minPrice);
+        if (!isNaN(minPrice) && ad.averagePrice < minPrice) {
+          return false;
+        }
+      }
+
+      if (filters.maxPrice) {
+        const maxPrice = parseFloat(filters.maxPrice);
+        if (!isNaN(maxPrice) && ad.averagePrice > maxPrice) {
+          return false;
+        }
+      }
+
+      if (filters.minWeight) {
+        const minWeight = parseFloat(filters.minWeight);
+        if (!isNaN(minWeight) && ad.truckInfo.loadCapacity < minWeight) {
+          return false;
+        }
+      }
+
+      if (filters.maxWeight) {
+        const maxWeight = parseFloat(filters.maxWeight);
+        if (!isNaN(maxWeight) && ad.truckInfo.loadCapacity > maxWeight) {
+          return false;
+        }
+      }
+
+      if (filters.startDate) {
+        const startDate = new Date(filters.startDate);
+        const adDate = new Date(ad.availableDate);
+        if (!isNaN(startDate.getTime()) && adDate < startDate) {
+          return false;
+        }
+      }
+
+      if (filters.endDate) {
+        const endDate = new Date(filters.endDate);
+        const adDate = new Date(ad.availableDate);
+        if (!isNaN(endDate.getTime()) && adDate > endDate) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  }, [filters, isCargoOwner, searchQuery]);
+
+  const filteredShipperAds = useMemo<ShipperAd[]>(() => {
+    if (isCargoOwner) {
+      return [];
+    }
+
+    return mockAds.filter((ad) => {
       const searchLower = searchQuery.toLowerCase().trim();
       if (searchLower) {
         const routeMatch =
@@ -216,7 +222,7 @@ export default function AdsScreen() {
 
       return true;
     });
-  }, [searchQuery, filters, isCargoOwner]);
+  }, [filters, isCargoOwner, searchQuery]);
 
   const handleToggleDetails = (adId: string) => {
     setExpandedAdId(expandedAdId === adId ? null : adId);
@@ -792,6 +798,14 @@ export default function AdsScreen() {
     );
   };
 
+  const renderEmptyList = () => (
+    <View style={styles.emptyContainer} testID="ads-empty-state">
+      <Package size={64} color={Colors.textSecondary} />
+      <Text style={styles.emptyText}>Нет доступных объявлений</Text>
+      <Text style={styles.emptySubtext}>Попробуйте изменить параметры поиска</Text>
+    </View>
+  );
+
   return (
     <View style={styles.container}>
       <Stack.Screen
@@ -834,22 +848,27 @@ export default function AdsScreen() {
         </TouchableOpacity>
       </View>
 
-      <FlatList
-        data={filteredAds}
-        renderItem={isCargoOwner ? renderCarrierAdCard : renderShipperAdCard}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContent}
-        showsVerticalScrollIndicator={false}
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Package size={64} color={Colors.textSecondary} />
-            <Text style={styles.emptyText}>Нет доступных объявлений</Text>
-            <Text style={styles.emptySubtext}>
-              Попробуйте изменить параметры поиска
-            </Text>
-          </View>
-        }
-      />
+      {isCargoOwner ? (
+        <FlatList<CarrierAd>
+          data={filteredCarrierAds}
+          renderItem={renderCarrierAdCard}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.listContent}
+          showsVerticalScrollIndicator={false}
+          ListEmptyComponent={renderEmptyList}
+          testID="carrier-ads-list"
+        />
+      ) : (
+        <FlatList<ShipperAd>
+          data={filteredShipperAds}
+          renderItem={renderShipperAdCard}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.listContent}
+          showsVerticalScrollIndicator={false}
+          ListEmptyComponent={renderEmptyList}
+          testID="shipper-ads-list"
+        />
+      )}
 
       <Modal
         visible={filterModalVisible}
